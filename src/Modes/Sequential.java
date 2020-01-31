@@ -11,12 +11,11 @@ public class Sequential
 
 		Player[] players = new Player[5];
 		Logic.initializePlayers(players);
-		Scanner scan = new Scanner(System.in);
-		int numGames = scan.nextInt();
+		int numGames = enterNumGames();
 
 		// Total number of games: 5 * 4 * number_of_games
-		// Maximum number of wins: 8 * number_of_games (4 * number_of_games + 4 *
-		// number_of_games)
+		// Maximum number of wins per player:
+		// 8 * number_of_games (4 * number_of_games + 4 *number_of_games)
 
 		for (int i = 0; i < players.length; i++)
 		{
@@ -33,6 +32,30 @@ public class Sequential
 			}
 		}
 
+		System.out.println("\n\n\n    SCOREBOARD    \n");
+
+		for (int i = 0; i < players.length; i++)
+			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
+		System.out.println("\n Ties: " + Logic.getTies());
+
+	}
+
+	public static int enterNumGames()
+	{
+		Scanner scan = new Scanner(System.in);
+		int numGames;
+		do
+		{
+			System.out.print("Enter the number of games per two players: ");
+			while (!scan.hasNextInt())
+			{
+				System.out.println("That's not a number!");
+				scan.next();
+			}
+			numGames = scan.nextInt();
+		} while (numGames <= 0);
 		scan.close();
+
+		return numGames;
 	}
 }
