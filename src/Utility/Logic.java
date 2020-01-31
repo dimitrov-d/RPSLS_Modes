@@ -17,12 +17,12 @@ public class Logic
 		return Element.values()[new Random().nextInt(Element.values().length)];
 	}
 
-	protected static void randomizePlayers(Player[] players)
+	public static void randomizePlayers(Player[] players)
 	{
 		Arrays.asList(players).stream().forEach(p -> p.setElement(getRandomElement()));
 	}
 
-	public static Element getWinnerElement(Element el1, Element el2)
+	private static Element getWinnerElement(Element el1, Element el2)
 	{
 		switch (el1)
 		{
@@ -117,30 +117,6 @@ public class Logic
 			p2.incrementScore();
 	}
 
-	// Total number of games: 5 * 4 * number_of_games
-	// Maximum number of wins: 8 * number_of_games (4 * number_of_games + 4 *
-	// number_of_games)
-	public static void playGame(Player[] player, int numGames)
-	{
-		resetTies();
-		resetScores(player);
-
-		for (int i = 0; i < player.length; i++)
-		{
-			for (int j = 0; j < player.length; j++)
-			{
-				if (i == j)
-					continue;
-
-				for (int z = 0; z < numGames; z++)
-				{
-					getWinnerPlayer(player[i], player[j]);
-					randomizePlayers(player);
-				}
-			}
-		}
-	}
-
 	public static int getTies()
 	{
 		return ties;
@@ -151,8 +127,12 @@ public class Logic
 		ties = 0;
 	}
 
-	private static void resetScores(Player[] players)
+	public static void initializePlayers(Player[] players)
 	{
-		Arrays.asList(players).stream().forEach(p -> p.setScore(0));
+		for (int i = 0; i < players.length; i++)
+		{
+			players[i] = new Player();
+		}
+
 	}
 }
