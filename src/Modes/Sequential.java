@@ -13,16 +13,14 @@ public class Sequential
 		Logic.initializePlayers(players);
 		int numGames = enterNumGames();
 
-		// Total number of games: 5 * 4 * number_of_games
+		// Total number of games: 5 * 2 * number_of_games
 		// Maximum number of wins per player:
-		// 8 * number_of_games (4 * number_of_games + 4 *number_of_games)
+		// 4 * number_of_games
 
 		for (int i = 0; i < players.length; i++)
 		{
-			for (int j = 0; j < players.length; j++)
+			for (int j = i+1; j < players.length; j++)
 			{
-				if (i == j)
-					continue;
 
 				for (int z = 0; z < numGames; z++)
 				{
