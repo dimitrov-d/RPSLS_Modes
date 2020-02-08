@@ -9,23 +9,27 @@ public class Sequential
 
 	public static void main(String[] args)
 	{
-
+		// Change the parameter below to change number of players
 		Player[] players = new Player[5];
 		Logic.initializePlayers(players);
 		int numGames = enterNumGames();
+		int numPlayers = players.length;
+		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
 		long start = System.currentTimeMillis();
 
 		while (Logic.equalScoreExists(players))
 			playGame(players, numGames);
-		System.out.println("Total number of games played: " + 10 * numGames);
-		System.out.println("Maximum wins per player: " + 4 * numGames);
+		System.out.println("Total number of games played: " + (formula * numGames));
+		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
 		System.out.println("\n\n    SCOREBOARD    \n");
 
 		for (int i = 0; i < players.length; i++)
 			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
-		System.out.println("\n Ties: " + Logic.getTies());
+
+		System.out.println(" Ties: " + Logic.getTies());
+		System.out.println("\n Winner is: Player " + getWinner(players));
 		System.out.println(
-				" Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
+				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
 
 	}
 
