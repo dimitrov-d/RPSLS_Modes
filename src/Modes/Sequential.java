@@ -1,6 +1,7 @@
 package Modes;
 
 import java.util.Scanner;
+
 import Utility.*;
 
 public class Sequential
@@ -12,25 +13,12 @@ public class Sequential
 		Player[] players = new Player[5];
 		Logic.initializePlayers(players);
 		int numGames = enterNumGames();
+		long start = System.currentTimeMillis();
+		
+		while (Logic.equalScoreExists(players))
+			playGame(players, numGames);
 
-		// Total number of games: 5 * 2 * number_of_games
-		// Maximum number of wins per player:
-		// 4 * number_of_games
-
-		for (int i = 0; i < players.length; i++)
-		{
-			for (int j = i+1; j < players.length; j++)
-			{
-
-				for (int z = 0; z < numGames; z++)
-				{
-					Logic.getWinnerPlayer(players[i], players[j]);
-					Logic.randomizePlayers(players);
-				}
-			}
-		}
-
-		System.out.println("\n\n\n    SCOREBOARD    \n");
+		System.out.println("\n\n    SCOREBOARD    \n");
 
 		for (int i = 0; i < players.length; i++)
 			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
@@ -55,5 +43,23 @@ public class Sequential
 		scan.close();
 
 		return numGames;
+	}
+
+	public static void playGame(Player[] players, int numGames)
+	{
+		// Total number of games: 5 * 2 * number_of_games
+		// Maximum number of wins per player: 4 * number_of_games
+		for (int i = 0; i < players.length; i++)
+		{
+			for (int j = i + 1; j < players.length; j++)
+			{
+
+				for (int z = 0; z < numGames; z++)
+				{
+					Logic.getWinnerPlayer(players[i], players[j]);
+					Logic.randomizePlayers(players);
+				}
+			}
+		}
 	}
 }

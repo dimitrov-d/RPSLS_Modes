@@ -1,6 +1,7 @@
 package Utility;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Logic
@@ -122,11 +123,6 @@ public class Logic
 		return ties;
 	}
 
-	private static void resetTies()
-	{
-		ties = 0;
-	}
-
 	public static void initializePlayers(Player[] players)
 	{
 		for (int i = 0; i < players.length; i++)
@@ -134,5 +130,19 @@ public class Logic
 			players[i] = new Player();
 		}
 
+	}
+	
+	public static boolean equalScoreExists(Player[] players)
+	{
+		var set = new HashSet<Integer>();
+		for (int i = 0; i < players.length; i++)
+		{
+			if (set.contains(players[i].getScore()))
+				return true;
+			set.add(players[i].getScore());
+
+		}
+
+		return false;
 	}
 }
