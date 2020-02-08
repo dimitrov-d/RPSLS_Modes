@@ -64,4 +64,19 @@ public class Sequential
 			}
 		}
 	}
+
+	private static int getWinner(Player[] players)
+	{
+		int maxScore = 0;
+		int playerIndex = 0;
+
+		for (int i = 0; i < players.length; i++)
+			if (maxScore < players[i].getScore())
+			{
+				playerIndex = (i + 1);
+				maxScore = players[i].getScore();
+			}
+
+		return playerIndex;
+	}
 }
