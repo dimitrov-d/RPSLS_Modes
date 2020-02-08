@@ -14,15 +14,18 @@ public class Sequential
 		Logic.initializePlayers(players);
 		int numGames = enterNumGames();
 		long start = System.currentTimeMillis();
-		
+
 		while (Logic.equalScoreExists(players))
 			playGame(players, numGames);
-
+		System.out.println("Total number of games played: " + 10 * numGames);
+		System.out.println("Maximum wins per player: " + 4 * numGames);
 		System.out.println("\n\n    SCOREBOARD    \n");
 
 		for (int i = 0; i < players.length; i++)
 			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
 		System.out.println("\n Ties: " + Logic.getTies());
+		System.out.println(
+				" Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
 
 	}
 
