@@ -122,6 +122,16 @@ public class Logic
 	{
 		return ties;
 	}
+	
+	public static void resetTies()
+	{
+		ties=0;
+	}
+	
+	public static void resetScores(Player[] players)
+	{
+		Arrays.asList(players).forEach(p -> p.setScore(0));
+	}
 
 	public static void initializePlayers(Player[] players)
 	{

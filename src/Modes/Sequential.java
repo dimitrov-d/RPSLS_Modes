@@ -50,13 +50,12 @@ public class Sequential
 
 	public static void playGame(Player[] players, int numGames)
 	{
-		// Total number of games: 5 * 2 * number_of_games
-		// Maximum number of wins per player: 4 * number_of_games
+		Logic.resetTies();
+		Logic.resetScores(players);
 		for (int i = 0; i < players.length; i++)
 		{
 			for (int j = i + 1; j < players.length; j++)
 			{
-
 				for (int z = 0; z < numGames; z++)
 				{
 					Logic.getWinnerPlayer(players[i], players[j]);
