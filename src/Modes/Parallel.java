@@ -1,22 +1,23 @@
 package Modes;
 
-import Utility.*;
+import Utility.Logic;
+import Utility.Logic.Element;
 
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parallel
 {
-	static TPlayer[] players;
+	static PlayerThread[] players;
 	static int numGames;
 
 	public static void main(String args[]) throws InterruptedException
 	{
 		numGames = enterNumGames();
-		players = new TPlayer[5];
+		players = new PlayerThread[5];
 		for (int i = 0; i < players.length; i++)
 		{
-			players[i] = new TPlayer();
+			players[i] = new PlayerThread();
 			players[i].setName("Player " + (i));
 
 		}
@@ -54,19 +55,21 @@ public class Parallel
 	
 }
 
-class TPlayer extends Thread
+class PlayerThread extends Thread
 {
+	Element element;
 	AtomicInteger score;
 
-	public TPlayer()
+	public PlayerThread()
 	{
 		score = new AtomicInteger(0);
+		element = Logic.getRandomElement();
 	}
 
 	@Override
 	public void run()
 	{
-		TPlayer players[] = Parallel.players;
+		PlayerThread players[] = Parallel.players;
 		int numGames = Parallel.numGames;
 		
 		String name = Thread.currentThread().getName();
@@ -82,7 +85,7 @@ class TPlayer extends Thread
 		}
 	}
 
-	public void playGame(TPlayer p1, TPlayer p2)
+	public void playGame(PlayerThread p1, PlayerThread p2)
 	{
 		System.out.println(p1.getName() + " vs " + p2.getName());
 		
