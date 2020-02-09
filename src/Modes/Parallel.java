@@ -2,14 +2,17 @@ package Modes;
 
 import Utility.*;
 
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parallel
 {
 	static TPlayer[] players;
+	static int numGames;
 
 	public static void main(String args[]) throws InterruptedException
 	{
+		numGames = enterNumGames();
 		players = new TPlayer[5];
 		for (int i = 0; i < players.length; i++)
 		{
@@ -17,13 +20,38 @@ public class Parallel
 			players[i].setName("Player " + (i));
 
 		}
-
+		long start = System.currentTimeMillis();
+		
 		for (int i = 0; i < players.length; i++)
-		{
 			players[i].start();
-		}
+		
+		for (int i = 0; i < players.length; i++)
+			players[i].join();
+		
+		System.out.println(
+				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
 
 	}
+	
+	public static int enterNumGames()
+	{
+		Scanner scan = new Scanner(System.in);
+		int numGames;
+		do
+		{
+			System.out.print("Enter the number of games per two players: ");
+			while (!scan.hasNextInt())
+			{
+				System.out.println("That's not a number!");
+				scan.next();
+			}
+			numGames = scan.nextInt();
+		} while (numGames <= 0);
+		scan.close();
+
+		return numGames;
+	}
+	
 }
 
 class TPlayer extends Thread
