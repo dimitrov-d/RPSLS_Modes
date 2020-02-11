@@ -1,6 +1,6 @@
 package Modes;
 
-import Utility.Logic;
+import Utility.*;
 import Utility.Logic.Element;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -19,7 +19,7 @@ public class Parallel
 		for (int i = 0; i < players.length; i++)
 		{
 			players[i] = new PlayerThread();
-			players[i].setName("Player " + (i));
+			players[i].setName("Player " + (i + 1));
 
 		}
 		long start = System.currentTimeMillis();
@@ -74,11 +74,9 @@ class PlayerThread extends Thread
 		int numGames = Parallel.numGames;
 
 		String name = Thread.currentThread().getName();
-		int playerNum = Character.getNumericValue(name.charAt(name.length() - 1));
-		
-		// TODO: Play games without repetition
-		
-		for (int i = 0; i < players.length; i++)
+		int playerNum = Character.getNumericValue(name.charAt(name.length() - 1) - 1);
+
+		for (int i = playerNum; i < players.length; i++)
 		{
 			if (i == playerNum)
 				continue;
