@@ -16,11 +16,12 @@ public class Parallel
 	{
 		numGames = enterNumGames();
 		players = new PlayerThread[5];
+		int numPlayers = players.length;
+		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
 		for (int i = 0; i < players.length; i++)
 		{
 			players[i] = new PlayerThread();
 			players[i].setName("Player " + (i + 1));
-
 		}
 		long start = System.currentTimeMillis();
 
@@ -30,6 +31,15 @@ public class Parallel
 		for (int i = 0; i < players.length; i++)
 			players[i].join();
 
+		System.out.println("Total number of games played: " + (formula * numGames));
+		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
+		System.out.println("\n\n    SCOREBOARD    \n");
+
+		for (int i = 0; i < players.length; i++)
+			System.out.println(" Player " + (i + 1) + " score: " + players[i].score);
+
+		System.out.println(" Ties: " + ties);
+		System.out.println("\n Winner is: Player " + getWinner(players));
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
 
@@ -52,6 +62,21 @@ public class Parallel
 		scan.close();
 
 		return numGames;
+	}
+	
+	protected static int getWinner(PlayerThread[] players)
+	{
+		int maxScore = 0;
+		int playerIndex = 0;
+
+		for (int i = 0; i < players.length; i++)
+			if (maxScore < players[i].score.get())
+			{
+				playerIndex = (i + 1);
+				maxScore = players[i].score.get();
+			}
+
+		return playerIndex;
 	}
 
 }
@@ -83,7 +108,7 @@ class PlayerThread extends Thread
 
 			for (int j = 0; j < numGames; j++)
 			{
-				playGame(Parallel.players[playerNum], Parallel.players[i]);
+				playGame(players[playerNum], players[i]);
 				randomizePlayers(players);
 			}
 		}
@@ -91,7 +116,6 @@ class PlayerThread extends Thread
 
 	public void playGame(PlayerThread p1, PlayerThread p2)
 	{
-		System.out.println(p1.getName() + " vs " + p2.getName());
 		if (p1.element == p2.element)
 		{
 			Parallel.ties++;
@@ -108,4 +132,5 @@ class PlayerThread extends Thread
 	{
 		Arrays.asList(players).stream().forEach(p -> p.element = Logic.getRandomElement());
 	}
+	
 }
