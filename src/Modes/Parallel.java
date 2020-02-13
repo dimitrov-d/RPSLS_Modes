@@ -15,31 +15,12 @@ public class Parallel
 	public static void main(String args[]) throws InterruptedException
 	{
 		numGames = enterNumGames();
+		// Modify length of array to change number of players
 		players = new PlayerThread[5];
-		int numPlayers = players.length;
-		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
-		for (int i = 0; i < players.length; i++)
-		{
-			players[i] = new PlayerThread();
-			players[i].setName("Player " + (i + 1));
-		}
 		long start = System.currentTimeMillis();
+		initializePlayers(players);
+		printScoreboard(numGames, players);
 
-		for (int i = 0; i < players.length; i++)
-			players[i].start();
-
-		for (int i = 0; i < players.length; i++)
-			players[i].join();
-
-		System.out.println("Total number of games played: " + (formula * numGames));
-		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
-		System.out.println("\n\n    SCOREBOARD    \n");
-
-		for (int i = 0; i < players.length; i++)
-			System.out.println(" Player " + (i + 1) + " score: " + players[i].score);
-
-		System.out.println(" Ties: " + ties);
-		System.out.println("\n Winner is: Player " + getWinner(players));
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
 
@@ -63,8 +44,8 @@ public class Parallel
 
 		return numGames;
 	}
-	
-	protected static int getWinner(PlayerThread[] players)
+
+	private static int getWinner(PlayerThread[] players)
 	{
 		int maxScore = 0;
 		int playerIndex = 0;
@@ -77,6 +58,37 @@ public class Parallel
 			}
 
 		return playerIndex;
+	}
+
+	private static void initializePlayers(PlayerThread[] players) throws InterruptedException
+	{
+		// These loops cannot be run as a single loop, it makes a difference.
+		
+		for (int i = 0; i < players.length; i++)
+		{
+			players[i] = new PlayerThread();
+			players[i].setName("Player " + (i + 1));
+		}
+		for (int i = 0; i < players.length; i++)
+			players[i].start();
+
+		for (int i = 0; i < players.length; i++)
+			players[i].join();
+	}
+
+	private static void printScoreboard(int numGames, PlayerThread[] players)
+	{
+		int numPlayers = players.length;
+		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
+		System.out.println("Total number of games played: " + (formula * numGames));
+		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
+		System.out.println("\n\n    SCOREBOARD    \n");
+
+		for (int i = 0; i < players.length; i++)
+			System.out.println(" Player " + (i + 1) + " score: " + players[i].score);
+
+		System.out.println(" Ties: " + ties);
+		System.out.println("\n Winner is: Player " + getWinner(players));
 	}
 
 }
@@ -132,5 +144,5 @@ class PlayerThread extends Thread
 	{
 		Arrays.asList(players).stream().forEach(p -> p.element = Logic.getRandomElement());
 	}
-	
+
 }
