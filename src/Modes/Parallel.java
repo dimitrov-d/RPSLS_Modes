@@ -3,6 +3,7 @@ package Modes;
 import Utility.*;
 import Utility.Logic.Element;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,12 +19,13 @@ public class Parallel
 		// Modify length of array to change number of players
 		players = new PlayerThread[5];
 		long start = System.currentTimeMillis();
-		initializePlayers(players);
-		printScoreboard(numGames, players);
 
+		while (equalScoreExists(players))
+			initializePlayers(players);
+		
+		printScoreboard(numGames, players);
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
-
 	}
 
 	public static int enterNumGames()
@@ -35,7 +37,7 @@ public class Parallel
 			System.out.print("Enter the number of games per two players: ");
 			while (!scan.hasNextInt())
 			{
-				System.out.println("That's not a number!");
+				System.err.println("That's not a number!");
 				scan.next();
 			}
 			numGames = scan.nextInt();
@@ -58,12 +60,13 @@ public class Parallel
 			}
 
 		return playerIndex;
+
 	}
 
 	private static void initializePlayers(PlayerThread[] players) throws InterruptedException
 	{
 		// These loops cannot be run as a single loop, it makes a difference.
-		
+		Parallel.ties = 0;
 		for (int i = 0; i < players.length; i++)
 		{
 			players[i] = new PlayerThread();
@@ -89,6 +92,24 @@ public class Parallel
 
 		System.out.println(" Ties: " + ties);
 		System.out.println("\n Winner is: Player " + getWinner(players));
+	}
+
+	private static boolean equalScoreExists(PlayerThread[] players)
+	{
+
+		var set = new HashSet<Integer>();
+		for (int i = 0; i < players.length; i++)
+		{
+			if (players[i] == null)
+				return true;
+
+			if (set.contains(players[i].score.get()))
+				return true;
+			set.add(players[i].score.get());
+
+		}
+
+		return false;
 	}
 
 }
