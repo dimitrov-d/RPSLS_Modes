@@ -122,12 +122,12 @@ public class Logic
 	{
 		return ties;
 	}
-	
+
 	public static void resetTies()
 	{
-		ties=0;
+		ties = 0;
 	}
-	
+
 	public static void resetScores(Player[] players)
 	{
 		Arrays.asList(players).forEach(p -> p.setScore(0));
@@ -141,18 +141,33 @@ public class Logic
 		}
 
 	}
-	
-	public static boolean equalScoreExists(Player[] players)
+
+	public static boolean maxScoreTieExists(Player[] players)
 	{
 		var set = new HashSet<Integer>();
+		if (players[0] == null)
+			return true;
 		for (int i = 0; i < players.length; i++)
 		{
-			if (set.contains(players[i].getScore()))
+			int score = players[i].getScore();
+			int maxScore = getMaxScore(players);
+
+			if (score == maxScore && set.contains(score))
 				return true;
-			set.add(players[i].getScore());
 
+			set.add(score);
 		}
-
 		return false;
+	}
+	
+	private static int getMaxScore(Player[] players)
+	{
+		int maxScore = 0;
+
+		for (int i = 0; i < players.length; i++)
+			if (maxScore < players[i].getScore())
+				maxScore = players[i].getScore();
+
+		return maxScore;
 	}
 }

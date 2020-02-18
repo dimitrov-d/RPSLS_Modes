@@ -20,9 +20,9 @@ public class Parallel
 		players = new PlayerThread[5];
 		long start = System.currentTimeMillis();
 
-		while (equalScoreExists(players))
+		while (maxScoreTieExists(players))
 			initializePlayers(players);
-		
+
 		printScoreboard(numGames, players);
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
@@ -63,6 +63,18 @@ public class Parallel
 
 	}
 
+	private static int getMaxScore(PlayerThread[] players)
+	{
+		int maxScore = 0;
+
+		for (int i = 0; i < players.length; i++)
+			if (maxScore < players[i].score.get())
+				maxScore = players[i].score.get();
+
+		return maxScore;
+
+	}
+
 	private static void initializePlayers(PlayerThread[] players) throws InterruptedException
 	{
 		// These loops cannot be run as a single loop, it makes a difference.
@@ -94,21 +106,21 @@ public class Parallel
 		System.out.println("\n Winner is: Player " + getWinner(players));
 	}
 
-	private static boolean equalScoreExists(PlayerThread[] players)
+	private static boolean maxScoreTieExists(PlayerThread[] players)
 	{
-
 		var set = new HashSet<Integer>();
+		if (players[0] == null)
+			return true;
 		for (int i = 0; i < players.length; i++)
 		{
-			if (players[i] == null)
+			int score = players[i].score.get();
+			int maxScore = getMaxScore(players);
+
+			if (score == maxScore && set.contains(score))
 				return true;
 
-			if (set.contains(players[i].score.get()))
-				return true;
-			set.add(players[i].score.get());
-
+			set.add(score);
 		}
-
 		return false;
 	}
 

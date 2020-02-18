@@ -15,7 +15,7 @@ public class Sequential
 		int numGames = enterNumGames();
 		long start = System.currentTimeMillis();
 
-		while (Logic.equalScoreExists(players))
+		while (Logic.maxScoreTieExists(players))
 			playGame(players, numGames);
 		
 		printScoreboard(numGames, players);
