@@ -2,7 +2,6 @@ package Modes;
 
 import Utility.*;
 import java.util.HashSet;
-import java.util.Scanner;
 
 public class Parallel
 {
@@ -12,7 +11,7 @@ public class Parallel
 
 	public static void main(String args[]) throws InterruptedException
 	{
-		numGames = enterNumGames();
+		numGames = Logic.enterNumGames();
 		// Modify length of array to change number of players
 		players = new PlayerThread[5];
 		long start = System.currentTimeMillis();
@@ -23,25 +22,6 @@ public class Parallel
 		printScoreboard(numGames, players);
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
-	}
-
-	public static int enterNumGames()
-	{
-		Scanner scan = new Scanner(System.in);
-		int numGames;
-		do
-		{
-			System.out.print("Enter the number of games per two players: ");
-			while (!scan.hasNextInt())
-			{
-				System.err.println("That's not a number!");
-				scan.next();
-			}
-			numGames = scan.nextInt();
-		} while (numGames <= 0);
-		scan.close();
-
-		return numGames;
 	}
 
 	private static int getWinner(PlayerThread[] players)

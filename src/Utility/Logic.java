@@ -3,6 +3,7 @@ package Utility;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Logic
 {
@@ -136,9 +137,7 @@ public class Logic
 	public static void initializePlayers(Player[] players)
 	{
 		for (int i = 0; i < players.length; i++)
-		{
 			players[i] = new Player();
-		}
 
 	}
 
@@ -159,7 +158,7 @@ public class Logic
 		}
 		return false;
 	}
-	
+
 	private static int getMaxScore(Player[] players)
 	{
 		int maxScore = 0;
@@ -169,5 +168,68 @@ public class Logic
 				maxScore = players[i].getScore();
 
 		return maxScore;
+	}
+
+	public static int enterNumGames()
+	{
+		Scanner scan = new Scanner(System.in);
+		int numGames;
+		do
+		{
+			System.out.print("Enter the number of games per two players: ");
+			while (!scan.hasNextInt())
+			{
+				System.out.println("That's not a number!");
+				scan.next();
+			}
+			numGames = scan.nextInt();
+		} while (numGames <= 0);
+		scan.close();
+
+		return numGames;
+	}
+
+	private static int getWinner(Player[] players)
+	{
+		int maxScore = 0;
+		int playerIndex = 0;
+
+		for (int i = 0; i < players.length; i++)
+			if (maxScore < players[i].getScore())
+			{
+				playerIndex = (i + 1);
+				maxScore = players[i].getScore();
+			}
+
+		return playerIndex;
+	}
+
+	public static void printScoreboard(int numGames, Player[] players)
+	{
+		int numPlayers = players.length;
+		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
+		System.out.println("Total number of games played: " + (formula * numGames));
+		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
+		System.out.println("\n\n    SCOREBOARD    \n");
+
+		for (int i = 0; i < players.length; i++)
+			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
+
+		System.out.println(" Ties: " + getTies());
+		System.out.println("\n Winner is: Player " + getWinner(players));
+
+	}
+
+	public static void playGame(Player[] players, int numGames)
+	{
+		resetTies();
+		resetScores(players);
+		for (int i = 0; i < players.length; i++)
+			for (int j = i + 1; j < players.length; j++)
+				for (int z = 0; z < numGames; z++)
+				{
+					getWinnerPlayer(players[i], players[j]);
+					randomizePlayers(players);
+				}
 	}
 }
