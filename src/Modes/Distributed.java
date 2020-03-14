@@ -16,19 +16,31 @@ public class Distributed
 		player = MPI.COMM_WORLD.Rank();
 		int numPlayers = MPI.COMM_WORLD.Size();
 		int numGames = 5;
-		System.out.println("Player: " + player);
 		Player[] players = new Player[numPlayers];
+		System.out.println("Player: " + player);
 		Logic.initializePlayers(players);
 		long start = System.currentTimeMillis();
-
+		int scores[][] = new int[numPlayers][numPlayers + 1];
 		playGame(players, numGames);
 
-		if (player == 0)
+		for (int i = 0; i < scores.length - 1; i++)
 		{
-			printScoreboard(numGames, players);
-			System.out.println(
-					"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
+			if (player == i)
+			{
+				for (int j = 0; j < scores[i].length; j++)
+				{
+					if (j == scores[i].length - 1)
+						scores[i][j] = Logic.getTies();
+					else
+						scores[i][j] = players[j].getScore();
+					System.out.print(scores[i][j]);
+				}
+			}
+			System.out.println();
 		}
+
+		if (player == 0)
+			printScoreboard(numGames, players);
 		MPI.Finalize();
 	}
 
