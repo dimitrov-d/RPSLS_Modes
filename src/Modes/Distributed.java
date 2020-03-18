@@ -1,71 +1,87 @@
 package Modes;
 
+import java.util.Arrays;
+
 import Utility.Logic;
 import Utility.Player;
 import mpi.*;
 
 public class Distributed
 {
-	static int player;
+	static int rank;
+	static Player[] players;
+	static int numPlayers;
+	static int[] scores;
+	static int[] ties;
+	static int numGames;
+	static long start;
 
-	public static void main(String args[]) throws Exception
+	public static void main(String[] args) throws Exception
 	{
 		MPI.Init(args);
-		player = MPI.COMM_WORLD.Rank();
-		int numPlayers = MPI.COMM_WORLD.Size();
-		int numGames = 5;
-		
-		Player[] players = new Player[numPlayers];
-		System.out.println("Player: " + player);
+		initializeProperties();
 		Logic.initializePlayers(players);
-		
-//		long start = System.currentTimeMillis();
-
 		playGame(players, numGames);
-		evaluateScores(players);
-		
-		if (player == 0)
-			Logic.printScoreboard(numGames, players);
+		evaluateScores();
 		MPI.Finalize();
+	}
+	
+	public static void initializeProperties()
+	{
+		rank = MPI.COMM_WORLD.Rank();
+		numPlayers = MPI.COMM_WORLD.Size();
+		scores = new int[numPlayers];
+		ties = new int[1];
+		numGames = 5;
+		start = System.currentTimeMillis();
+		players = new Player[numPlayers];
 	}
 
 	public static void playGame(Player[] players, int numGames)
 	{
 		Logic.resetTies();
 		Logic.resetScores(players);
-		for (int i = player; i < players.length; i++)
+		for (int i = rank; i < players.length; i++)
 		{
-			if (i == player)
+			if (i == rank)
 				continue;
 			for (int j = 0; j < numGames; j++)
 			{
-				Logic.getWinnerPlayer(players[player], players[i]);
+				Logic.getWinnerPlayer(players[rank], players[i]);
 				Logic.randomizePlayers(players);
 			}
 		}
 	}
 
-	private static void evaluateScores(Player[] players)
+	private static void evaluateScores()
 	{
-		int numPlayers = players.length;
-		int scores[][] = new int[numPlayers][numPlayers + 1];
+		for (int i = 0; i < scores.length; i++)
+			scores[i] = players[i].getScore();
+		ties[0] = Logic.getTies();
 
-		for (int i = 0; i < scores.length - 1; i++)
-		{
-			if (player == i)
-			{
-				for (int j = 0; j < scores[i].length; j++)
-				{
-					if (j == scores[i].length - 1)
-						scores[i][j] = Logic.getTies();
-					else
-						scores[i][j] = players[j].getScore();
-					System.out.print(scores[i][j]);
-				}
-			}
-			System.out.println();
-		}
-
+		gatherScores();
 	}
 
+	public static void gatherScores()
+	{
+		// Arrays used for gathering scores and ties from each distribution
+		int[] allScores = new int[scores.length * numPlayers];
+		int[] allTies = new int[numPlayers];
+
+		MPI.COMM_WORLD.Gather(scores, 0, scores.length, MPI.INT, allScores, 0, scores.length, MPI.INT, 0);
+		MPI.COMM_WORLD.Gather(ties, 0, ties.length, MPI.INT, allTies, 0, ties.length, MPI.INT, 0);
+		
+		if (rank == 0)
+		{
+			// Add the scores and ties to the original Player array
+			Logic.resetScores(players);
+			for (int i = 0; i < allScores.length; i++)
+				players[i % numPlayers].setScore(players[i % numPlayers].getScore() + allScores[i]);
+			int totalTies = Arrays.stream(allTies).sum();
+
+			Logic.printScoreboard(numGames, players, totalTies);
+			System.out.println(
+					"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
+		}
+	}
 }
