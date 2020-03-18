@@ -15,11 +15,10 @@ public class Sequential
 
 		while (Logic.maxScoreTieExists(players))
 			Logic.playGame(players, numGames);
-		
-		Logic.printScoreboard(numGames, players);
+
+		Logic.printScoreboard(numGames, players, -1);
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
-
 	}
 
 }

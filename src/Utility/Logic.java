@@ -204,10 +204,11 @@ public class Logic
 		return playerIndex;
 	}
 
-	public static void printScoreboard(int numGames, Player[] players)
+	public static void printScoreboard(int numGames, Player[] players, int ties)
 	{
 		int numPlayers = players.length;
 		int formula = ((numPlayers * (numPlayers + 1)) / 2) - numPlayers;
+		System.out.println("Number of games per two players: " + numGames);
 		System.out.println("Total number of games played: " + (formula * numGames));
 		System.out.println("Maximum wins per player: " + (numPlayers - 1) * numGames);
 		System.out.println("\n\n    SCOREBOARD    \n");
@@ -215,9 +216,10 @@ public class Logic
 		for (int i = 0; i < players.length; i++)
 			System.out.println(" Player " + (i + 1) + " score: " + players[i].getScore());
 
-		System.out.println(" Ties: " + getTies());
+		int finalTies = (ties == -1) ? getTies() : ties; // Differentiate between ties in sequential and distributed
+															// mode
+		System.out.println(" Ties: " + finalTies);
 		System.out.println("\n Winner is: Player " + getWinner(players));
-
 	}
 
 	public static void playGame(Player[] players, int numGames)
