@@ -222,16 +222,4 @@ public class Logic
 		System.out.println("\n Winner is: Player " + getWinner(players));
 	}
 
-	public static void playGame(Player[] players, int numGames)
-	{
-		resetTies();
-		resetScores(players);
-		for (int i = 0; i < players.length; i++)
-			for (int j = i + 1; j < players.length; j++)
-				for (int z = 0; z < numGames; z++)
-				{
-					getWinnerPlayer(players[i], players[j]);
-					randomizePlayers(players);
-				}
-	}
 }

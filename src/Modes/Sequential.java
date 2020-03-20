@@ -14,11 +14,24 @@ public class Sequential
 		long start = System.currentTimeMillis();
 
 		while (Logic.maxScoreTieExists(players))
-			Logic.playGame(players, numGames);
+			playGame(players, numGames);
 
 		Logic.printScoreboard(numGames, players, -1);
 		System.out.println(
 				"\n Gameplay runtime took: " + ((double) (System.currentTimeMillis() - start) / 1000) + " seconds");
+	}
+	
+	public static void playGame(Player[] players, int numGames)
+	{
+		Logic.resetTies();
+		Logic.resetScores(players);
+		for (int i = 0; i < players.length; i++)
+			for (int j = i + 1; j < players.length; j++)
+				for (int z = 0; z < numGames; z++)
+				{
+					Logic.getWinnerPlayer(players[i], players[j]);
+					Logic.randomizePlayers(players);
+				}
 	}
 
 }
